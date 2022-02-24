@@ -15,10 +15,6 @@
 ```
 git clone <repo name>
 ```
-```
-git submodule init
-git submodule update
-```
 
 ### `backend`
 ```

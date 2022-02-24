@@ -1,17 +1,18 @@
-import { ethers } from "hardhat"
-import { Greeter, Greeter__factory } from "../types"
+import { ethers, deployments } from "hardhat"
+import { SyntheticLootCharacter, SyntheticLootCharacter__factory } from "../types"
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers"
 import { expect } from "chai"
 
-describe("Greeter", function () {
+describe("SyntheticLootCharacter", function () {
   let signers: SignerWithAddress[]
-  let greeter: Greeter
+  let syntheticLootCharacter: SyntheticLootCharacter
 
   beforeEach(async function () {
     signers = await ethers.getSigners()
-    const greeterFactory = new Greeter__factory(signers[0])
-    greeter = await greeterFactory.deploy("Hello, Hardhat!")
-    await greeter.deployed()
+    await deployments.fixture(["SyntheticLootCharacter"])
+    const SLC = await deployments.get("SyntheticLootCharacter")
+    // TODO: get contract from SLC
+    await syntheticLootCharacter.deployed()
   })
 
   it("Should return the new greeting once it's changed", async function () {
