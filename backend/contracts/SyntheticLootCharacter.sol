@@ -9,7 +9,7 @@ contract SyntheticLootCharacter is ERC721 {
 
     using Strings for string;
 
-    string[8] renderOrder = [
+    string[8] public renderOrder = [
         "weapon",
         "chest",
         "head",
@@ -19,6 +19,8 @@ contract SyntheticLootCharacter is ERC721 {
         "neck",
         "ring"
     ];
+
+    string public constant cid = "QmUEvrQtE67en6upRT6K4j1LD58VQ6oAQQJ6cWy9MPk1TL";
 
     SyntheticLoot syntheticLoot;
     // TODO: Mutliple IPFS gateways, choose random based on block number
@@ -43,21 +45,12 @@ contract SyntheticLootCharacter is ERC721 {
         // ];
 
         // TODO: Render all components, only getting names for now
-        string[8] memory componentNames = [
-            lowerUnderscore(syntheticLoot.getWeapon(walletAddress)),
-            lowerUnderscore(syntheticLoot.getChest(walletAddress)),
-            lowerUnderscore(syntheticLoot.getHead(walletAddress)),
-            lowerUnderscore(syntheticLoot.getWaist(walletAddress)),
-            lowerUnderscore(syntheticLoot.getFoot(walletAddress)),
-            lowerUnderscore(syntheticLoot.getHand(walletAddress)),
-            lowerUnderscore(syntheticLoot.getNeck(walletAddress)),
-            lowerUnderscore(syntheticLoot.getRing(walletAddress))
-        ];
+        string[8] memory componentNames = getComponentFilenames(walletAddress);
 
         string memory svg = '<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">';
 
         for (uint256 i = 0; i < componentNames.length; i++) {
-            string memory url = string.concat(gateways[block.number % gateways.length], renderOrder[i], '/name/', componentNames[i], '.png');
+            string memory url = string.concat(gateways[block.number % gateways.length], cid, '/', renderOrder[i], '/name/', componentNames[i], '.png');
             string memory image = string.concat('<image width="200" href="', url, '"/>');
             svg = string.concat(svg, image);
         }
@@ -82,19 +75,31 @@ contract SyntheticLootCharacter is ERC721 {
         return address(uint160(id));
     }
 
+    function getComponentFilenames(address walletAddress) public view returns (string[8] memory) {
+        return [
+            processName(syntheticLoot.getWeapon(walletAddress)),
+            processName(syntheticLoot.getChest(walletAddress)),
+            processName(syntheticLoot.getHead(walletAddress)),
+            processName(syntheticLoot.getWaist(walletAddress)),
+            processName(syntheticLoot.getFoot(walletAddress)),
+            processName(syntheticLoot.getHand(walletAddress)),
+            processName(syntheticLoot.getNeck(walletAddress)),
+            processName(syntheticLoot.getRing(walletAddress))
+        ];
+    }
+
     /*
     *   Utils
     */
-
-    function lowerUnderscore(string memory _base)
-        internal
-        pure
-        returns (string memory) {
-        bytes memory _baseBytes = bytes(_base);
-        for (uint i = 0; i < _baseBytes.length; i++) {
-            _baseBytes[i] = _lowerUnderscore(_baseBytes[i]);
+    function processName(string memory _base) internal pure returns (string memory) {
+        bytes memory base = bytes(_base);
+        bytes memory out;
+        for (uint256 i = 0; i < base.length; i++) {
+            if (base[i] != 0x22) {
+                out = bytes.concat(out, _lowerUnderscore(base[i]));
+            }
         }
-        return string(_baseBytes);
+        return string(out);
     }
 
     function _lowerUnderscore(bytes1 _b1)
