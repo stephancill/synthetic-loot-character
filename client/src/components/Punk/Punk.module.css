@@ -1,0 +1,11 @@
+.punk {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.punk object, .punk img {
+  width: 340px;
+  border-radius: 5px;
+}

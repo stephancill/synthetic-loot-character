@@ -9,10 +9,15 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   const {deployer} = await getNamedAccounts()
 
+  const contentGateways = [
+    // "https://ipfs.io/ipfs/",
+    "http://localhost:8000/"
+  ]
+
   await deploy("SyntheticLootCharacter", {
     from: deployer,
     log: true,
-    args: ["Synthetic Loot Character", "sLOOTCHARACTER", SyntheticLoot.address, ["https://ipfs.io/ipfs/"]],
+    args: ["Synthetic Loot Character", "sLOOTCHARACTER", SyntheticLoot.address, contentGateways],
     autoMine: true, // speed up deployment on local network (ganache, hardhat), no effect on live networks
   })
 }

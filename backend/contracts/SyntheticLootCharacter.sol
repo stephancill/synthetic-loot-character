@@ -1,11 +1,11 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.12;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "./abstract/ClaimableSynthetic.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "./external/SyntheticLoot.sol";
 
-contract SyntheticLootCharacter is ERC721 {
+contract SyntheticLootCharacter is ClaimableSynthetic {
 
     using Strings for string;
 
@@ -20,10 +20,9 @@ contract SyntheticLootCharacter is ERC721 {
         "ring"
     ];
 
-    string public constant cid = "QmUEvrQtE67en6upRT6K4j1LD58VQ6oAQQJ6cWy9MPk1TL";
+    string public constant cid = "QmbcKUu71Jh64tuJ41fWaLj4XRSkp3umYfaRRpnbjMxeH3";
 
     SyntheticLoot syntheticLoot;
-    // TODO: Mutliple IPFS gateways, choose random based on block number
     string[] gateways;
 
     constructor (string memory _name, string memory _symbol, address _syntheticLootAddress, string[] memory _gateways) ERC721(_name, _symbol) {
@@ -33,25 +32,20 @@ contract SyntheticLootCharacter is ERC721 {
 
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
         address walletAddress = getAddress(tokenId);
-        // uint[5][8] memory components = [
-        //     syntheticLoot.weaponComponents(walletAddress),
-        //     syntheticLoot.chestComponents(walletAddress),
-        //     syntheticLoot.headComponents(walletAddress),
-        //     syntheticLoot.waistComponents(walletAddress),
-        //     syntheticLoot.footComponents(walletAddress),
-        //     syntheticLoot.handComponents(walletAddress),
-        //     syntheticLoot.neckComponents(walletAddress),
-        //     syntheticLoot.ringComponents(walletAddress)
-        // ];
+        string memory gateway = gateways[block.number % gateways.length];
+        
 
         // TODO: Render all components, only getting names for now
-        string[8] memory componentNames = getComponentFilenames(walletAddress);
+        uint[8] memory componentNames = getComponentFilenames(walletAddress);
 
-        string memory svg = '<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">';
+        string memory svg = '<svg preserveAspectRatio="xMinYMin meet" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">';
+
+        svg = string.concat(svg, '<image width="500" href="', gateway, cid, '/bg.png', '"/>');
+        svg = string.concat(svg, '<image width="500" href="', gateway, cid, '/fg.png', '"/>');
 
         for (uint256 i = 0; i < componentNames.length; i++) {
-            string memory url = string.concat(gateways[block.number % gateways.length], cid, '/', renderOrder[i], '/name/', componentNames[i], '.png');
-            string memory image = string.concat('<image width="200" href="', url, '"/>');
+            string memory url = string.concat(gateway, cid, '/', renderOrder[i], '/name/', Strings.toString(componentNames[i]), '.png');
+            string memory image = string.concat('<image width="500" href="', url, '"/>');
             svg = string.concat(svg, image);
         }
 
@@ -63,28 +57,26 @@ contract SyntheticLootCharacter is ERC721 {
         return output;
     }
 
-    function _tokenURI(address _address) public view returns (string memory) {
-        return tokenURI(getTokenID(_address));
-    }
-
-    function getTokenID(address _address) public pure returns (uint256) {
-        return uint256(uint160(_address));
-    }
-
-    function getAddress(uint256 id) public pure returns (address) {
-        return address(uint160(id));
-    }
-
-    function getComponentFilenames(address walletAddress) public view returns (string[8] memory) {
+    function getComponentFilenames(address walletAddress) public view returns (uint[8] memory) {
+        // return [
+        //     processName(syntheticLoot.getWeapon(walletAddress)),
+        //     processName(syntheticLoot.getChest(walletAddress)),
+        //     processName(syntheticLoot.getHead(walletAddress)),
+        //     processName(syntheticLoot.getWaist(walletAddress)),
+        //     processName(syntheticLoot.getFoot(walletAddress)),
+        //     processName(syntheticLoot.getHand(walletAddress)),
+        //     processName(syntheticLoot.getNeck(walletAddress)),
+        //     processName(syntheticLoot.getRing(walletAddress))
+        // ];
         return [
-            processName(syntheticLoot.getWeapon(walletAddress)),
-            processName(syntheticLoot.getChest(walletAddress)),
-            processName(syntheticLoot.getHead(walletAddress)),
-            processName(syntheticLoot.getWaist(walletAddress)),
-            processName(syntheticLoot.getFoot(walletAddress)),
-            processName(syntheticLoot.getHand(walletAddress)),
-            processName(syntheticLoot.getNeck(walletAddress)),
-            processName(syntheticLoot.getRing(walletAddress))
+            syntheticLoot.weaponComponents(walletAddress)[0],
+            syntheticLoot.chestComponents(walletAddress)[0],
+            syntheticLoot.headComponents(walletAddress)[0],
+            syntheticLoot.waistComponents(walletAddress)[0],
+            syntheticLoot.footComponents(walletAddress)[0],
+            syntheticLoot.handComponents(walletAddress)[0],
+            syntheticLoot.neckComponents(walletAddress)[0],
+            syntheticLoot.ringComponents(walletAddress)[0]
         ];
     }
 

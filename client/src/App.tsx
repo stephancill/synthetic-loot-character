@@ -1,33 +1,79 @@
-import logo from './logo.svg';
 import './App.css';
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom"
 import { ConnectButton } from './components/ConnectButton/ConnectButton';
-import { GreeterState } from './components/GreeterState/GreeterState';
-import { useProvider, useSigner } from 'wagmi';
-import { providers } from 'ethers'
+import { useAccount, useNetwork } from 'wagmi';
+import { NeonText } from './components/NeonText/NeonText';
+import { PunkCard } from './components/PunkCard/PunkCard';
+import { useEffect } from 'react';
+import { Search } from './components/Search/Search';
+import deployments from "./deployments.json"
+import { Copy } from "./components/Copy/Copy"
+import opensea from "./img/opensea.svg"
+import github from "./img/github.svg"
+import etherscan from "./img/etherscan.svg"
+
+const deploymentChain = parseInt(deployments.chainId)
 
 function App() {
-  const provider = useProvider()
+  const [{data: account}] = useAccount()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const [{data: network}, switchNetwork] = useNetwork()
+
+  var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+  useEffect(() => {
+    if (account && location.pathname === "/") {
+      navigate(`/address/${account.address}`)
+    }
+  }, [account, location.pathname, navigate])
 
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-        <div>
-          <ConnectButton></ConnectButton>
+      <NeonText></NeonText>
+      <div className="linksContainer" style={{display: "flex"}}>
+        <a href="https://opensea.io/collection/synthetic-cryptopunks" target="_blank" rel="noopener noreferrer"><img src={opensea} alt="OpenSea"/></a>
+        <a href="https://github.com/stephancill/synthetic-punks" target="_blank" rel="noopener noreferrer"><img src={github} alt="GitHub"/></a>
+        <a href={`https://etherscan.io/address/${deployments.contracts.SyntheticLootCharacter.address}`} target="_blank" rel="noopener noreferrer"><img src={etherscan} alt="Etherscan"/></a>
+      </div>
+      
+      {isSafari && <div>
+        Note: Safari is not supported. Please try a different browser!
+      </div>}
+
+      <div style={{marginTop: "40px", marginBottom: "40px", width: "90%", maxWidth: "400px", display: "flex", justifyContent: "center"}}>
+        <ConnectButton/>
+      </div>
+      
+      {network && switchNetwork && network.chain?.id !== deploymentChain 
+      ?
+        <div style={{marginBottom:"30px",width: "90%",textAlign:"center"}}>
+          <button className="switchNetworkBtn" onClick={() => switchNetwork(deploymentChain)}>Switch to {deployments.name}</button>
         </div>
-        <div>{provider && <GreeterState></GreeterState>}</div>
-      </header>
+      :
+        <Routes>
+          <Route path="/" element={
+            <div style={{display: "flex", width: "90%", maxWidth: "400px", marginBottom: "40px"}}>
+              <Search onSearch={(address) => navigate(`/address/${address}`)}/>
+            </div>
+          }/>
+          <Route path="address">
+            <Route path=":address" element={<PunkCard/>}/>
+          </Route>
+          <Route
+              path="*"
+              element={
+                <main style={{ padding: "1rem" }}>
+                  <p>There's nothing here!</p>
+                </main>
+              }
+            />
+        </Routes>
+      }
+      <Copy/>
+      <footer style={{marginBottom: "20px"}}>
+        Created by <a href="https://twitter.com/stephancill" target="_blank" rel="noopener noreferrer">@stephancill</a> and <a href="https://twitter.com/npm_luko" target="_blank" rel="noopener noreferrer">@npm_luko</a>
+      </footer>
     </div>
   );
 }

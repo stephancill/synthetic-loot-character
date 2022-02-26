@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2018",
     "lib": [
       "dom",
       "dom.iterable",
@@ -22,7 +22,7 @@
   },
   "references": [
     { 
-      "path": "../backend"
+      "path": "../lib"
     }
   ],
   "include": [

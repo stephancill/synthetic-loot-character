@@ -1,0 +1,18 @@
+
+/* style={{marginLeft: "auto", border: "none", "background": "none", cursor: "pointer", height: "18px"}} */
+.twitterButton {
+  margin-left: auto;
+  border: none;
+  background: none;
+  height: 22px;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.twitterButton:hover {
+  filter: drop-shadow(0px 0px 4px #00FFAA);
+}
+
+.twitterButton img {
+  height: 100%;
+}

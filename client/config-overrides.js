@@ -5,7 +5,6 @@ module.exports = override(
   removeModuleScopePlugin(), // (1)
   babelInclude([
     path.resolve("src"),
-    path.resolve("../backend/types")
-    // path.resolve("../lib"),  // (2)
+    path.resolve("../lib"),  // (2)
   ]),
 );
