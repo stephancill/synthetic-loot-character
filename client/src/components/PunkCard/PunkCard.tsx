@@ -105,6 +105,10 @@ export const PunkCard = () => {
     }
   }, [currentTx]) 
 
+  useEffect(() => {
+    console.log("claimPrice changed", claimPrice ? ethers.utils.formatEther(claimPrice as any as BigNumber): claimPrice)
+  }, [claimPrice])
+
   const onClaim = () => {
     claim().then(({data: tx}) => setCurrentTx(tx))
   }

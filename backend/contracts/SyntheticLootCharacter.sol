@@ -1,9 +1,10 @@
-//SPDX-License-Identifier: Unlicense
+//SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.12;
 
 import "./abstract/ClaimableSynthetic.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "./external/SyntheticLoot.sol";
+import "./interfaces/ISyntheticLootCharacterAssets.sol";
 
 contract SyntheticLootCharacter is ClaimableSynthetic {
 
@@ -23,33 +24,24 @@ contract SyntheticLootCharacter is ClaimableSynthetic {
     string public constant cid = "QmbcKUu71Jh64tuJ41fWaLj4XRSkp3umYfaRRpnbjMxeH3";
 
     SyntheticLoot syntheticLoot;
+    ISyntheticLootCharacterAssets assets;
     string[] gateways;
 
-    constructor (string memory _name, string memory _symbol, address _syntheticLootAddress, string[] memory _gateways) ERC721(_name, _symbol) {
+    constructor (string memory _name, string memory _symbol, address _syntheticLootAddress, address _syntheticLootCharacterAssetsAddress) ERC721(_name, _symbol) {
         syntheticLoot = SyntheticLoot(_syntheticLootAddress);
-        gateways = _gateways;
+        assets = ISyntheticLootCharacterAssets(_syntheticLootCharacterAssetsAddress);
     }
 
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
         address walletAddress = getAddress(tokenId);
-        string memory gateway = gateways[block.number % gateways.length];
-        
 
         // TODO: Render all components, only getting names for now
-        uint[8] memory componentNames = getComponentFilenames(walletAddress);
-
-        string memory svg = '<svg preserveAspectRatio="xMinYMin meet" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">';
-
-        svg = string.concat(svg, '<image width="500" href="', gateway, cid, '/bg.png', '"/>');
-        svg = string.concat(svg, '<image width="500" href="', gateway, cid, '/fg.png', '"/>');
-
-        for (uint256 i = 0; i < componentNames.length; i++) {
-            string memory url = string.concat(gateway, cid, '/', renderOrder[i], '/name/', Strings.toString(componentNames[i]), '.png');
-            string memory image = string.concat('<image width="500" href="', url, '"/>');
-            svg = string.concat(svg, image);
-        }
-
-        svg = string.concat(svg, '</svg>');
+        string memory svg = string.concat(
+            '<svg viewBox="0 0 50 50" width="1000" xmlns="http://www.w3.org/2000/svg">',
+            getDefs(), 
+            getCharacter(walletAddress), 
+            '</svg>'
+        );
 
         string memory json = Base64.encode(bytes(string(abi.encodePacked('{"name": "Bag 0x', toAsciiString(walletAddress), '", "description": "Loot is randomized adventurer gear generated and stored on chain. Stats, images, and other functionality are intentionally omitted for others to interpret. Feel free to use Loot in any way you want.", "image": "data:image/svg+xml;base64,', Base64.encode(bytes(svg)), '"}'))));
         string memory output = string(abi.encodePacked('data:application/json;base64,', json));
@@ -57,58 +49,58 @@ contract SyntheticLootCharacter is ClaimableSynthetic {
         return output;
     }
 
-    function getComponentFilenames(address walletAddress) public view returns (uint[8] memory) {
-        // return [
-        //     processName(syntheticLoot.getWeapon(walletAddress)),
-        //     processName(syntheticLoot.getChest(walletAddress)),
-        //     processName(syntheticLoot.getHead(walletAddress)),
-        //     processName(syntheticLoot.getWaist(walletAddress)),
-        //     processName(syntheticLoot.getFoot(walletAddress)),
-        //     processName(syntheticLoot.getHand(walletAddress)),
-        //     processName(syntheticLoot.getNeck(walletAddress)),
-        //     processName(syntheticLoot.getRing(walletAddress))
-        // ];
-        return [
-            syntheticLoot.weaponComponents(walletAddress)[0],
-            syntheticLoot.chestComponents(walletAddress)[0],
-            syntheticLoot.headComponents(walletAddress)[0],
-            syntheticLoot.waistComponents(walletAddress)[0],
-            syntheticLoot.footComponents(walletAddress)[0],
-            syntheticLoot.handComponents(walletAddress)[0],
-            syntheticLoot.neckComponents(walletAddress)[0],
-            syntheticLoot.ringComponents(walletAddress)[0]
-        ];
+    function getSpritesheetElement(string memory _id, string memory _imageData) internal pure returns (string memory) {
+        return string.concat('<svg width="50" height="50" viewBox="100 0 50 50"><image id="', _id, '" preserveAspectRatio="xMinYMin slice" href="', _imageData, '" /></svg>');
+    }
+
+    function getDefs() internal view returns (string memory) {
+        return string.concat(
+            '<defs>',
+            getStyle(),
+            getSpritesheetElement("skeleton", assets.skeleton()),
+            getSpritesheetElement("weapon", assets.weapon()),
+            getSpritesheetElement("chest", assets.chest()),
+            getSpritesheetElement("head", assets.head()),
+            getSpritesheetElement("waist", assets.waist()),
+            getSpritesheetElement("foot", assets.foot()),
+            getSpritesheetElement("hand", assets.hand()),
+            getSpritesheetElement("neck", assets.neck()),
+            getSpritesheetElement("ring", assets.ring()) , 
+            '</defs>'
+        );
+    }
+
+    function getStyle() internal pure returns (string memory) {
+        return '<style> #character { image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges; image-rendering: pixelated; } svg { background : #1A1A1A; } </style>';
+    }
+
+    function getItemElement(string memory _id, string memory _spritesheetId) internal pure returns (string memory) {
+        return string.concat(
+            '<svg width="50" height="50" viewBox="', _id, ' 0 50 50">', 
+            '<use href="#', _spritesheetId, '"></use>',
+            '</svg>'
+        );
+    }
+
+    function getCharacter(address walletAddress) internal view returns (string memory) {
+        return string.concat(
+            '<svg id="character">',
+            getItemElement("0", "skeleton"),
+            getItemElement(Strings.toString(syntheticLoot.weaponComponents(walletAddress)[0]*assets.itemSize()), "weapon"),
+            getItemElement(Strings.toString(syntheticLoot.chestComponents(walletAddress)[0]*assets.itemSize()), "chest"),
+            getItemElement(Strings.toString(syntheticLoot.headComponents(walletAddress)[0]*assets.itemSize()), "head"),
+            getItemElement(Strings.toString(syntheticLoot.waistComponents(walletAddress)[0]*assets.itemSize()), "waist"),
+            getItemElement(Strings.toString(syntheticLoot.footComponents(walletAddress)[0]*assets.itemSize()), "foot"),
+            getItemElement(Strings.toString(syntheticLoot.handComponents(walletAddress)[0]*assets.itemSize()), "hand"),
+            getItemElement(Strings.toString(syntheticLoot.neckComponents(walletAddress)[0]*assets.itemSize()), "neck"),
+            getItemElement(Strings.toString(syntheticLoot.ringComponents(walletAddress)[0]*assets.itemSize()), "ring"),
+            '</svg>'
+        );
     }
 
     /*
     *   Utils
     */
-    function processName(string memory _base) internal pure returns (string memory) {
-        bytes memory base = bytes(_base);
-        bytes memory out;
-        for (uint256 i = 0; i < base.length; i++) {
-            if (base[i] != 0x22) {
-                out = bytes.concat(out, _lowerUnderscore(base[i]));
-            }
-        }
-        return string(out);
-    }
-
-    function _lowerUnderscore(bytes1 _b1)
-        private
-        pure
-        returns (bytes1) {
-
-        if (_b1 == 0x20) {
-            return bytes1(0x5f);
-        }
-
-        if (_b1 >= 0x41 && _b1 <= 0x5A) {
-            return bytes1(uint8(_b1) + 32);
-        }
-
-        return _b1;
-    }
 
     // https://ethereum.stackexchange.com/a/8447
     function toAsciiString(address x) internal pure returns (string memory) {
@@ -128,6 +120,5 @@ contract SyntheticLootCharacter is ClaimableSynthetic {
         if (uint8(b) < 10) return bytes1(uint8(b) + 0x30);
         else return bytes1(uint8(b) + 0x57);
     }
-
     
 }

@@ -2,7 +2,7 @@
  *Submitted for verification at Etherscan.io on 2021-09-01
 */
 
-// SPDX-License-Identifier: Unlicense
+// SPDX-License-Identifier: GPL-3.0
 
 /*
 
