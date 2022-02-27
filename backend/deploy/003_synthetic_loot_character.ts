@@ -46,7 +46,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   await deploy("SyntheticLootCharacter", {
     from: deployer,
     log: true,
-    args: ["Synthetic Loot Character", "sLOOTCHARACTER", SyntheticLoot.address, SyntheticLootCharacterAssets.address],
+    args: [name, symbol, SyntheticLoot.address, SyntheticLootCharacterAssets.address],
     autoMine: true, // speed up deployment on local network (ganache, hardhat), no effect on live networks
   })
 }
