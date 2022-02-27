@@ -53,48 +53,39 @@ contract SyntheticLootCharacter is ClaimableSynthetic {
         return string.concat('<svg width="50" height="50" viewBox="100 0 50 50"><image id="', _id, '" preserveAspectRatio="xMinYMin slice" href="', _imageData, '" /></svg>');
     }
 
-    function getDefs() internal view returns (string memory) {
+    function getDefs() internal pure returns (string memory) {
         return string.concat(
             '<defs>',
-            getStyle(),
-            getSpritesheetElement("skeleton", assets.skeleton()),
-            getSpritesheetElement("weapon", assets.weapon()),
-            getSpritesheetElement("chest", assets.chest()),
-            getSpritesheetElement("head", assets.head()),
-            getSpritesheetElement("waist", assets.waist()),
-            getSpritesheetElement("foot", assets.foot()),
-            getSpritesheetElement("hand", assets.hand()),
-            getSpritesheetElement("neck", assets.neck()),
-            getSpritesheetElement("ring", assets.ring()) , 
+                getStyle(),
             '</defs>'
         );
     }
 
     function getStyle() internal pure returns (string memory) {
-        return '<style> #character { image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges; image-rendering: pixelated; } svg { background : #1A1A1A; } </style>';
+        return '<style> img { image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges; image-rendering: pixelated; height: 50px;} svg { background : #1A1A1A; } </style>';
     }
 
-    function getItemElement(string memory _id, string memory _spritesheetId) internal pure returns (string memory) {
+    function getItemElement(string memory _id, string memory _spritesheetData) internal pure returns (string memory) {
         return string.concat(
             '<svg width="50" height="50" viewBox="', _id, ' 0 50 50">', 
-            '<use href="#', _spritesheetId, '"></use>',
+                '<foreignObject width="10000" height="50">',
+                    '<img xmlns="http://www.w3.org/1999/xhtml" src="',  _spritesheetData,'" />',
+                '</foreignObject>',
             '</svg>'
         );
     }
 
     function getCharacter(address walletAddress) internal view returns (string memory) {
         return string.concat(
-            '<svg id="character">',
-            getItemElement("0", "skeleton"),
-            getItemElement(Strings.toString(syntheticLoot.weaponComponents(walletAddress)[0]*assets.itemSize()), "weapon"),
-            getItemElement(Strings.toString(syntheticLoot.chestComponents(walletAddress)[0]*assets.itemSize()), "chest"),
-            getItemElement(Strings.toString(syntheticLoot.headComponents(walletAddress)[0]*assets.itemSize()), "head"),
-            getItemElement(Strings.toString(syntheticLoot.waistComponents(walletAddress)[0]*assets.itemSize()), "waist"),
-            getItemElement(Strings.toString(syntheticLoot.footComponents(walletAddress)[0]*assets.itemSize()), "foot"),
-            getItemElement(Strings.toString(syntheticLoot.handComponents(walletAddress)[0]*assets.itemSize()), "hand"),
-            getItemElement(Strings.toString(syntheticLoot.neckComponents(walletAddress)[0]*assets.itemSize()), "neck"),
-            getItemElement(Strings.toString(syntheticLoot.ringComponents(walletAddress)[0]*assets.itemSize()), "ring"),
-            '</svg>'
+            getItemElement("0", assets.skeleton()),
+            getItemElement(Strings.toString(syntheticLoot.weaponComponents(walletAddress)[0]*assets.itemSize()), assets.weapon()),
+            getItemElement(Strings.toString(syntheticLoot.chestComponents(walletAddress)[0]*assets.itemSize()), assets.chest()),
+            getItemElement(Strings.toString(syntheticLoot.headComponents(walletAddress)[0]*assets.itemSize()), assets.head()),
+            getItemElement(Strings.toString(syntheticLoot.waistComponents(walletAddress)[0]*assets.itemSize()), assets.waist()),
+            getItemElement(Strings.toString(syntheticLoot.footComponents(walletAddress)[0]*assets.itemSize()), assets.foot()),
+            getItemElement(Strings.toString(syntheticLoot.handComponents(walletAddress)[0]*assets.itemSize()), assets.hand()),
+            getItemElement(Strings.toString(syntheticLoot.neckComponents(walletAddress)[0]*assets.itemSize()), assets.neck()),
+            getItemElement(Strings.toString(syntheticLoot.ringComponents(walletAddress)[0]*assets.itemSize()), assets.ring())
         );
     }
 
