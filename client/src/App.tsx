@@ -20,8 +20,6 @@ function App() {
   const location = useLocation()
   const [{data: network}, switchNetwork] = useNetwork()
 
-  var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-
   useEffect(() => {
     if (account && location.pathname === "/") {
       navigate(`/address/${account.address}`)
@@ -30,16 +28,12 @@ function App() {
 
   return (
     <div className="App">
-      <NeonText></NeonText>
+      <div style={{fontSize: "60px", margin: "20px"}}>Synthetic Loot</div>
       <div className="linksContainer" style={{display: "flex"}}>
         <a href="https://opensea.io/collection/synthetic-cryptopunks" target="_blank" rel="noopener noreferrer"><img src={opensea} alt="OpenSea"/></a>
         <a href="https://github.com/stephancill/synthetic-punks" target="_blank" rel="noopener noreferrer"><img src={github} alt="GitHub"/></a>
         <a href={`https://etherscan.io/address/${deployments.contracts.SyntheticLootCharacter.address}`} target="_blank" rel="noopener noreferrer"><img src={etherscan} alt="Etherscan"/></a>
       </div>
-      
-      {isSafari && <div>
-        Note: Safari is not supported. Please try a different browser!
-      </div>}
 
       <div style={{marginTop: "40px", marginBottom: "40px", width: "90%", maxWidth: "400px", display: "flex", justifyContent: "center"}}>
         <ConnectButton/>
