@@ -2,8 +2,8 @@ import { HardhatUserConfig, task } from "hardhat/config"
 import "@typechain/hardhat"
 import "@nomiclabs/hardhat-waffle"
 import "@nomiclabs/hardhat-ethers"
-import "hardhat-deploy"
 import "hardhat-preprocessor"
+import "hardhat-deploy"
 import dotenv from "dotenv"
 import spritesheets from "./lib/image-data.json"
 import { HardhatNetworkUserConfig } from "hardhat/types"
@@ -68,7 +68,8 @@ const config: HardhatUserConfig = {
   },
   preprocess: {
     eachLine: (hre) => ({
-      transform: (line) => line.indexOf("// PREPROCESS CONSTANT: ") > -1 ? SOLIDITY_CONSTANTS[line.split("// PREPROCESS CONSTANT: ")[1]] : line
+      transform: (line) => line.indexOf("// PREPROCESS CONSTANT: ") > -1 ? SOLIDITY_CONSTANTS[line.split("// PREPROCESS CONSTANT: ")[1]] : line,
+      settings: {comment: true}
     })
   }
 }

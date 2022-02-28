@@ -23,7 +23,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   const {deployer} = await getNamedAccounts()
 
-  const debug = network.name === "hardhat"
+  const debug = network.name === "hardhat" || network.name === "localhost"
   const isMainnet = network.name == "mainnet"
 
   const name = isMainnet ? "Synthetic Loot Character" : "Secret Project"
