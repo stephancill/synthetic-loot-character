@@ -27,11 +27,11 @@ function App() {
 
   return (
     <div className="App">
-      <div style={{fontSize: "60px", margin: "20px", marginTop: "60px", textAlign: "center"}}>Synthetic Loot</div>
+      <div style={{fontSize: "60px", margin: "20px", marginTop: "60px", textAlign: "center"}}>Synthetic Loot Character</div>
       <div className="linksContainer" style={{display: "flex"}}>
         {/* TODO: Update */}
-        <a href="https://opensea.io/collection/synthetic-cryptotokens" target="_blank" rel="noopener noreferrer"><img src={opensea} alt="OpenSea"/></a>
-        <a href="https://github.com/stephancill/synthetic-tokens" target="_blank" rel="noopener noreferrer"><img src={github} alt="GitHub"/></a>
+        <a href={`https://opensea.io/assets/${deployments.contracts.SyntheticLootCharacter.address}/`} target="_blank" rel="noopener noreferrer"><img src={opensea} alt="OpenSea"/></a>
+        <a href="https://github.com/stephancill/synthetic-loot-character" target="_blank" rel="noopener noreferrer"><img src={github} alt="GitHub"/></a>
         <a href={`https://etherscan.io/address/${deployments.contracts.SyntheticLootCharacter.address}`} target="_blank" rel="noopener noreferrer"><img src={etherscan} alt="Etherscan"/></a>
       </div>
 

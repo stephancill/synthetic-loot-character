@@ -55,7 +55,7 @@ export const TokenDetail = ({address}: ITokenDetailProps) => {
   }
   
   return (
-    <div style={{minHeight: "650px", display: "flex", justifyContent: "center"}}>
+    <div style={{minHeight: "560px", display: "flex", justifyContent: "center"}}>
       {loading 
       ? 
         <div style={{marginTop: "auto", marginBottom: "auto"}}>
