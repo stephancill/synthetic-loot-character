@@ -1,4 +1,5 @@
 import { ReactElement, useState } from "react"
+import deployments from "../../deployments.json"
 
 interface ISection {
   heading: string
@@ -8,26 +9,30 @@ interface ISection {
 export const Copy = () => {
   const sections: ISection[] = [
     {
-      heading: "What are Synthetic Punks?",
-      body: <p><b>Synthetic CryptoPunks</b> is inspired by the historical collection of 
-      10,000 <a href="https://www.larvalabs.com/cryptopunks" target="_blank" rel="noopener noreferrer">CryptoPunks by Larva Labs</a> and <a href="https://www.lootproject.com/" target="_blank" rel="noopener noreferrer">Synthetic Loot</a> by <a href="https://twitter.com/dhof" target="_blank" rel="noopener noreferrer">dhof</a>. 
-      It generates a unique, fully on-chain CryptoPunk for each Ethereum address.
+      heading: "What is Synthetic Loot?",
+      body: <p><b>Synthetic Loot</b> is a loot bag associated with each ethereum address. For more information about the Loot Project see <a href="https://www.lootproject.com/" target="_blank" rel="noopener noreferrer">lootproject.com</a>. 
+      For more information about Synthetic Loot, see the <a href="https://www.lootproject.com/synthloot" target="_blank" rel="noopener noreferrer">Synthetic Loot FAQ</a> page.</p>
+    },
+    {
+      heading: "What is a Synthetic Loot Character?",
+      body: <p>Synthetic Loot Character is a visual representation of an address' Synthetic Loot. 
+        It generates a unique, fully on-chain character for each Ethereum address.
       <br/><br/>They are free to view for any address, but can be claimed as an ERC-721 NFT for a price of 0.02 ether.</p>
     },
     {
       heading: "Features",
-      body: <p>Each Synthetic Punk
+      body: <p>Each Synthetic Loot Character
         <ul>
-          {/* <li>Is generated from assets stored <a href={`https://etherscan.io/address/${deployments.contracts.SyntheticPunksAssets.address}`}>fully on-chain</a></li> */}
+          <li>Is generated from assets stored <a href={`https://etherscan.io/address/${deployments.contracts.SyntheticLootCharacterAssets.address}`}>fully on-chain</a></li>
           <li>Is uniquely associated with an ethereum wallet address</li>
           <li>Supports <a href="https://ens.domains/">Ethereum Name Service (ENS)</a> in its metadata</li>
         </ul>
       </p>
     },
     {
-      heading: "Why should I claim my Punk?",
-      body: <p>Claiming your Synthetic Punk lets you:
-        <ul>
+      heading: "Why should I claim my Synthetic Loot Character?",
+      body: <p>Claiming your Synthetic Loot Character lets you:
+        <ul style={{marginTop: "10px"}}>
           <li><b>Show it off</b> in your NFT collection alongside your other collectibles</li>
           <li><b>Trade</b> it on marketplaces such as OpenSea, Rarible, or Zora</li>
           <li><b>Supports</b> us in making more projects like this!</li>
@@ -35,15 +40,10 @@ export const Copy = () => {
       </p>
     }, 
     {
-      heading: "Why can I claim random Punks?",
-      body: <p>When you click the random button, it generates a brand new ethereum wallet on the fly. Because you can prove you own the wallet associated with the punk, you can claim it and have it sent to your actual ethereum wallet.</p>
-    },
-    {
-      heading: "Why CryptoPunks?",
-      body: <p>We believe that it should be possible for everyone to participate in the digital collectibles space. 
-        CryptoPunks are the most recognizable and exclusive NFTs and the pixel art style of 
-        CryptoPunks also makes it viable to store the required assets on-chain. These attributes made CryptoPunks 
-        the obvious choice for this experiment.</p>
+      heading: "Why can I claim random Synthetic Loot Characters?",
+      body: <p>When you click the random button, it generates a new ethereum wallet on the fly. 
+        Because you can prove you own the wallet associated with the Synthetic Loot, you can claim 
+        it and have it sent to your actual ethereum wallet.</p>
     }
   ]
 
