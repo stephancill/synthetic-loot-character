@@ -30,7 +30,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const symbol = isMainnet ? "sLOOTCHARACTER" : "sPROJECT"
   
   // TODO: Withdrawal address
-  if (!debug) {
+  if (!debug && !process.env.SKIP_DEPLOY_CONFIRM) {
     const confirmation = await userInput(`
       Confirm name: ${name}\n
       Confirm symbol: ${symbol}\n

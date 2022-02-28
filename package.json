@@ -1,0 +1,11 @@
+{
+  "name": "synthetic-loot-character",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:stephancill/synthetic-loot-character.git",
+  "author": "Stephan Cilliers <5469870+stephancill@users.noreply.github.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "cd backend && yarn && npx hardhat compile && (yarn export --network rinkeby) && cd ../client && yarn build"
+  }
+}
