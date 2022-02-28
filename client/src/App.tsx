@@ -28,7 +28,7 @@ function App() {
 
   return (
     <div className="App">
-      <div style={{fontSize: "60px", margin: "20px"}}>Synthetic Loot</div>
+      <div style={{fontSize: "60px", margin: "20px", marginTop: "60px", textAlign: "center"}}>Synthetic Loot</div>
       <div className="linksContainer" style={{display: "flex"}}>
         <a href="https://opensea.io/collection/synthetic-cryptopunks" target="_blank" rel="noopener noreferrer"><img src={opensea} alt="OpenSea"/></a>
         <a href="https://github.com/stephancill/synthetic-punks" target="_blank" rel="noopener noreferrer"><img src={github} alt="GitHub"/></a>

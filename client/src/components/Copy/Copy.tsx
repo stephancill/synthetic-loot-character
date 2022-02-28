@@ -62,7 +62,7 @@ export const Copy = () => {
           expandedCopy[index] = !expandedCopy[index]
           setExpanded(expandedCopy)
         }}>
-          <h1 style={{display: "inline-block"}}>{section.heading}</h1> 
+          <h1 style={{display: "inline-block", fontWeight: "normal"}}>{section.heading}</h1> 
           <h1 style={{marginLeft: "auto", display: "inline-block"}}>{expanded[index] ? "–" : "+"}</h1>
         </div>
           {expanded[index] && <div style={{marginTop: "20px"}}>

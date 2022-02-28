@@ -89,6 +89,19 @@ contract SyntheticLootCharacter is ClaimableSynthetic {
         );
     }
 
+    function getItems(address walletAddress) external view returns (string[8] memory) {
+        return [
+            syntheticLoot.getHead(walletAddress),
+            syntheticLoot.getNeck(walletAddress),
+            syntheticLoot.getChest(walletAddress),
+            syntheticLoot.getHand(walletAddress),
+            syntheticLoot.getRing(walletAddress),
+            syntheticLoot.getWaist(walletAddress),
+            syntheticLoot.getWeapon(walletAddress),
+            syntheticLoot.getFoot(walletAddress)
+        ];
+    }
+
     /*
     *   Utils
     */

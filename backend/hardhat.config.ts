@@ -4,6 +4,7 @@ import "@nomiclabs/hardhat-waffle"
 import "@nomiclabs/hardhat-ethers"
 import "hardhat-preprocessor"
 import "hardhat-deploy"
+import "hardhat-gas-reporter"
 import dotenv from "dotenv"
 import spritesheets from "./lib/image-data.json"
 import { HardhatNetworkUserConfig } from "hardhat/types"
@@ -71,6 +72,10 @@ const config: HardhatUserConfig = {
       transform: (line) => line.indexOf("// PREPROCESS CONSTANT: ") > -1 ? SOLIDITY_CONSTANTS[line.split("// PREPROCESS CONSTANT: ")[1]] : line,
       settings: {comment: true}
     })
+  },
+  gasReporter: {
+    currency: "USD",
+    coinmarketcap: process.env.COINMARKETCAP_API_KEY
   }
 }
 
