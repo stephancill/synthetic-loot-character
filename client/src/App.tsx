@@ -66,7 +66,7 @@ function App() {
       }
       <Copy/>
       <footer style={{marginBottom: "20px"}}>
-        Created by <a href="https://twitter.com/stephancill" target="_blank" rel="noopener noreferrer">@stephancill</a> and <a href="https://twitter.com/npm_luko" target="_blank" rel="noopener noreferrer">@npm_luko</a>
+        Created by <a href="https://twitter.com/stephancill" target="_blank" rel="noopener noreferrer">@stephancill</a>
       </footer>
     </div>
   );
