@@ -6,6 +6,6 @@
   "author": "Stephan Cilliers <5469870+stephancill@users.noreply.github.com>",
   "license": "MIT",
   "scripts": {
-    "build": "cd backend && yarn && npx hardhat compile && (yarn export --network rinkeby) && cd ../client && yarn build"
+    "build": "cd backend && yarn && npx hardhat compile && (yarn export --network rinkeby) && cd ../client && yarn && yarn build"
   }
 }
