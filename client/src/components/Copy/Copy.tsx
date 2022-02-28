@@ -1,5 +1,4 @@
 import { ReactElement, useState } from "react"
-import deployments from "../../deployments.json"
 
 interface ISection {
   heading: string

@@ -36,6 +36,7 @@ export const TokenDetail = ({address}: ITokenDetailProps) => {
       console.log(address)
       setImageData((JSON.parse(atob(tokenURI.split(",")[1])) as any).image)
     }
+  // eslint-disable-next-line
   }, [tokenURI])
 
   useEffect(() => {
