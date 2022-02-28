@@ -1,15 +1,15 @@
 import { useAccount, useContractRead, useContractWrite, useProvider, useSigner } from "wagmi"
 import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router"
-import { PunkDetail } from "../PunkDetail/PunkDetail"
+import { TokenDetail } from "../TokenDetail/TokenDetail"
 import { useContractAdapter } from "../../hooks/useContractAdapter"
 import { ClaimButton } from "../ClaimButton/ClaimButton"
 import { BigNumber, ethers, Wallet } from "ethers"
 import { Search } from "../Search/Search"
 import { useLocation } from "react-router-dom"
-import { PunkCardHeader } from "../PunkCardHeader/PunkCardHeader"
+import { TokenCardHeader } from "../TokenCardHeader/TokenCardHeader"
 import dice from "../../img/dice.svg"
-import style from "./PunkCard.module.css"
+import style from "./TokenCard.module.css"
 import { useSyntheticLootCharacter } from "../../hooks/useSyntheticLootCharacter"
 
 const {isAddress, getAddress} = ethers.utils
@@ -23,7 +23,7 @@ export enum AddressType {
   Owner
 }
 
-export const PunkCard = () => {
+export const TokenCard = () => {
   const provider = useProvider()
   const [{ data: signer }] = useSigner()
   const [{ data: account }] = useAccount()
@@ -34,42 +34,42 @@ export const PunkCard = () => {
 
   const address = rawAddress ? isAddress(rawAddress.toLowerCase()) ? getAddress(rawAddress.toLowerCase()) : undefined : undefined
 
-  const syntheticPunks = useSyntheticLootCharacter(signer || provider)
-  const syntheticPunksConfig = useContractAdapter(syntheticPunks)
+  const syntheticLoot = useSyntheticLootCharacter(signer || provider)
+  const syntheticLootConfig = useContractAdapter(syntheticLoot)
 
   const [currentTx, setCurrentTx] = useState<ethers.providers.TransactionResponse | undefined>()
 
   const [{ data: tokenClaimed }, readTokenClaimed] = useContractRead(
-    syntheticPunksConfig,
+    syntheticLootConfig,
     "claimed",
     {args: [address]}
   ) 
 
   const [{ data: tokenId }, readTokenId] = useContractRead(
-    syntheticPunksConfig,
+    syntheticLootConfig,
     "getTokenID",
     {args: [address]}
   ) 
 
   const [{ data: claimPrice }] = useContractRead(
-    syntheticPunksConfig,
+    syntheticLootConfig,
     "claimPrice",
   ) 
 
   const [{ data: ownerAddress }, readOwnerAddress] = useContractRead(
-    syntheticPunksConfig,
+    syntheticLootConfig,
     "ownerOf",
     {args: [tokenId]}
   ) 
 
   const [, claim] = useContractWrite(
-    syntheticPunksConfig,
+    syntheticLootConfig,
     "claim",
     {overrides: {value: claimPrice}}
   )
 
   const [, claimOther] = useContractWrite(
-    syntheticPunksConfig,
+    syntheticLootConfig,
     "claimOther"
   )
 
@@ -138,8 +138,9 @@ export const PunkCard = () => {
   }
 
   const onTwitterShare = () => {
+    // TODO: Update this
     const tweet = encodeURIComponent(`Check out my Synthetic CryptoPunk! @stephancill @npm_luko`)
-    const ctaURL = encodeURIComponent(`https://syntheticpunks.com/#${location.pathname}`)
+    const ctaURL = encodeURIComponent(`https://synthetictokens.com/#${location.pathname}`)
     const related = encodeURIComponent(`stephancill,npm_luko,larvalabs,lootproject`)
     const intentBaseURL = `https://twitter.com/intent/tweet`
     const intentURL = `${intentBaseURL}?text=${tweet}&url=${ctaURL}&related=${related}`
@@ -152,11 +153,11 @@ export const PunkCard = () => {
       <Search onSearch={onSearch}/>
       {signer && <button className={style.randomButton} onClick={() => onGenerateRandom()}><img src={dice} alt="Random"/></button>}
     </div>
-    <div className={style.punkCard}>
-      <div className={style.punkCardContent}>
-        <PunkCardHeader address={address} addressType={addressType} ownerAddress={ownerAddress as any as string} onTwitterShare={onTwitterShare}/>
+    <div className={style.tokenCard}>
+      <div className={style.tokenCardContent}>
+        <TokenCardHeader address={address} addressType={addressType} ownerAddress={ownerAddress as any as string} onTwitterShare={onTwitterShare}/>
         {address && <div>
-          <PunkDetail address={address}></PunkDetail>
+          <TokenDetail address={address}></TokenDetail>
           {provider && !(!tokenClaimed && !signerCanClaim) && <div style={{paddingBottom: "6px", marginTop: "20px"}}>
             <ClaimButton 
               address={address} 

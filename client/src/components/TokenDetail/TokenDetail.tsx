@@ -1,31 +1,31 @@
-import { Punk } from "../Punk/Punk"
+import { Token } from "../Token/Token"
 import { useEffect, useState } from "react"
 import { useContractRead, useProvider, useSigner } from "wagmi"
 import { useContractAdapter } from "../../hooks/useContractAdapter"
 import { SpinnerCircular } from "spinners-react"
 
-import style from "./PunkDetail.module.css"
+import style from "./TokenDetail.module.css"
 import { useSyntheticLootCharacter } from "../../hooks/useSyntheticLootCharacter"
 
-interface IPunkDetailProps {
+interface ITokenDetailProps {
   address: string
 }
 
-export const PunkDetail = ({address}: IPunkDetailProps) => {
+export const TokenDetail = ({address}: ITokenDetailProps) => {
   const provider = useProvider()
   const [{ data: signer }] = useSigner()
   
-  const syntheticPunks = useSyntheticLootCharacter(signer || provider)
-  const syntheticPunksConfig = useContractAdapter(syntheticPunks)
+  const syntheticLoot = useSyntheticLootCharacter(signer || provider)
+  const syntheticLootConfig = useContractAdapter(syntheticLoot)
 
   const [{ data: tokenURI, loading: tokenURILoading, error: tokenURIError }, readTokenURI] = useContractRead(
-    syntheticPunksConfig,
+    syntheticLootConfig,
     '_tokenURI',
     {args: [address]}
   ) 
 
   const [{ data: itemNames, loading: itemsLoading, error: itemsError }, readItems] = useContractRead(
-    syntheticPunksConfig,
+    syntheticLootConfig,
     'getItems',
     {args: [address]}
   ) 
@@ -54,7 +54,7 @@ export const PunkDetail = ({address}: IPunkDetailProps) => {
   }
   
   return (
-    <div style={{minHeight: "380px", display: "flex", justifyContent: "center"}}>
+    <div style={{minHeight: "650px", display: "flex", justifyContent: "center"}}>
       {loading 
       ? 
         <div style={{marginTop: "auto", marginBottom: "auto"}}>
@@ -62,7 +62,7 @@ export const PunkDetail = ({address}: IPunkDetailProps) => {
         </div>
       :  
         <div>
-          <Punk imageData={imageData!}></Punk>
+          <Token imageData={imageData!}></Token>
           <h1>Items</h1>
           <div className={style.attributesContainer}>
             {itemNames?.map((itemName, i) => {

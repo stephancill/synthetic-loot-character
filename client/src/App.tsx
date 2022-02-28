@@ -2,8 +2,7 @@ import './App.css';
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom"
 import { ConnectButton } from './components/ConnectButton/ConnectButton';
 import { useAccount, useNetwork } from 'wagmi';
-import { NeonText } from './components/NeonText/NeonText';
-import { PunkCard } from './components/PunkCard/PunkCard';
+import { TokenCard } from './components/TokenCard/TokenCard';
 import { useEffect } from 'react';
 import { Search } from './components/Search/Search';
 import deployments from "./deployments.json"
@@ -30,8 +29,9 @@ function App() {
     <div className="App">
       <div style={{fontSize: "60px", margin: "20px", marginTop: "60px", textAlign: "center"}}>Synthetic Loot</div>
       <div className="linksContainer" style={{display: "flex"}}>
-        <a href="https://opensea.io/collection/synthetic-cryptopunks" target="_blank" rel="noopener noreferrer"><img src={opensea} alt="OpenSea"/></a>
-        <a href="https://github.com/stephancill/synthetic-punks" target="_blank" rel="noopener noreferrer"><img src={github} alt="GitHub"/></a>
+        {/* TODO: Update */}
+        <a href="https://opensea.io/collection/synthetic-cryptotokens" target="_blank" rel="noopener noreferrer"><img src={opensea} alt="OpenSea"/></a>
+        <a href="https://github.com/stephancill/synthetic-tokens" target="_blank" rel="noopener noreferrer"><img src={github} alt="GitHub"/></a>
         <a href={`https://etherscan.io/address/${deployments.contracts.SyntheticLootCharacter.address}`} target="_blank" rel="noopener noreferrer"><img src={etherscan} alt="Etherscan"/></a>
       </div>
 
@@ -52,7 +52,7 @@ function App() {
             </div>
           }/>
           <Route path="address">
-            <Route path=":address" element={<PunkCard/>}/>
+            <Route path=":address" element={<TokenCard/>}/>
           </Route>
           <Route
               path="*"

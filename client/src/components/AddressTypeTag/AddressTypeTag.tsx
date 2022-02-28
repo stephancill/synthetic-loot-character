@@ -1,4 +1,4 @@
-import { AddressType } from "../PunkCard/PunkCard"
+import { AddressType } from "../TokenCard/TokenCard"
 import searchSmall from "../../img/searchSmall.svg"
 import diceSmall from "../../img/diceSmall.svg"
 import style from "./AddressTypeTag.module.css"

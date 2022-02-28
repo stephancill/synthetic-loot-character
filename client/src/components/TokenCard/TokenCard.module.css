@@ -1,4 +1,4 @@
-.punkCard {
+.tokenCard {
   background-color: var(--lighter);
   border-radius: 5px;
   padding-top: 20px;
@@ -6,7 +6,7 @@
   margin-bottom: 40px;
 }
 
-.punkCardContent {
+.tokenCardContent {
   margin-left: 30px;
   margin-right: 30px;
 }

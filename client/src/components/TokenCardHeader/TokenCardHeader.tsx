@@ -1,13 +1,13 @@
 import { AddressTypeTag } from "../AddressTypeTag/AddressTypeTag"
-import { AddressType } from "../PunkCard/PunkCard"
+import { AddressType } from "../TokenCard/TokenCard"
 import twitter from "../../img/twitter.svg"
-import style from "./PunkCardHeader.module.css"
+import style from "./TokenCardHeader.module.css"
 import { truncateAddress } from "../../utilities"
 import { useEnsLookup } from "wagmi"
 import { isAddress } from "ethers/lib/utils"
 import { ethers } from "ethers"
 
-interface IPunkCardHeaderProps {
+interface ITokenCardHeaderProps {
   address?: string
   addressType: AddressType
   ownerAddress?: string
@@ -18,7 +18,7 @@ const copyAddress = (address: string | undefined) => {
     navigator.clipboard.writeText(address);
   }
 }
-export const PunkCardHeader = ({address, addressType, ownerAddress, onTwitterShare}: IPunkCardHeaderProps) => {
+export const TokenCardHeader = ({address, addressType, ownerAddress, onTwitterShare}: ITokenCardHeaderProps) => {
   const [{ data: ensName }] = useEnsLookup({address})
   const [{ data: ownerEnsName }] = useEnsLookup({address: ownerAddress})
 

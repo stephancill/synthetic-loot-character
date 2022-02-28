@@ -1,11 +1,11 @@
-.punk {
+.token {
   display: flex;
   justify-content: center;
   margin-top: 20px;
   margin-bottom: 20px;
 }
 
-.punk object, .punk img {
+.token object, .token img {
   width: 340px;
   border-radius: 5px;
 }
