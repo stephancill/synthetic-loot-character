@@ -6,10 +6,11 @@ import isSVG from "is-svg"
 
 describe("SyntheticLootCharacter", function () {
   let signers: SignerWithAddress[]
+  let deployer: SignerWithAddress
   let syntheticLootCharacter: SyntheticLootCharacter
 
   beforeEach(async function () {
-    signers = await ethers.getSigners()
+    [deployer, ...signers] = await ethers.getSigners()
     await deployments.fixture(["SyntheticLootCharacter"])
     const SLC = await deployments.get("SyntheticLootCharacter")
     syntheticLootCharacter = await ethers.getContractAt("SyntheticLootCharacter", SLC.address, signers[0]) as SyntheticLootCharacter
@@ -18,6 +19,37 @@ describe("SyntheticLootCharacter", function () {
   it("Should store render order", async function () {
     const lastItem = await syntheticLootCharacter.renderOrder(7)
     expect(lastItem).to.equal("ring")
+  })
+
+  it("should set the withdrawal address", async function () {
+    const storedAddress = await syntheticLootCharacter.withdrawAddress()
+    expect(storedAddress).to.equal(deployer.address)
+  })
+
+  it("should withdraw the correct amount to the correct address", async function() {
+    const user = signers[4]
+    const balanceBefore = await deployer.getBalance()
+    const claimPrice = await syntheticLootCharacter.claimPrice()
+    await syntheticLootCharacter.connect(user).claim({value: claimPrice.mul("2")})
+    await syntheticLootCharacter.connect(user).withdraw()
+    const balanceAfter = await deployer.getBalance() 
+
+    expect(balanceAfter).to.equal(balanceBefore.add(claimPrice))
+  })
+
+  it("should let the owner change the withdrawal address", async function () {
+    const beforeAddress = await syntheticLootCharacter.withdrawAddress()
+    expect(beforeAddress).to.equal(deployer.address)
+
+    const newWithdrawAddress = signers[2].address
+    expect(newWithdrawAddress).to.not.equal(beforeAddress)
+    await syntheticLootCharacter.connect(deployer).setWithdrawAddress(newWithdrawAddress)
+    const afterAddress = await syntheticLootCharacter.withdrawAddress()
+    expect(afterAddress).to.equal(newWithdrawAddress)
+
+    const fraudWithdrawAddress = signers[2].address
+    expect(newWithdrawAddress).to.not.equal(beforeAddress)
+    expect(syntheticLootCharacter.connect(signers[1]).setWithdrawAddress(fraudWithdrawAddress)).to.be.revertedWith("Ownable: caller is not the owner")
   })
 
   it("should set the price to 0.02 eth", async function () {
@@ -47,7 +79,6 @@ describe("SyntheticLootCharacter", function () {
     const otherWallet = ethers.Wallet.createRandom()
     const message = await syntheticLootCharacter.claimMessage()
     const messageHash = await syntheticLootCharacter.getMessageHash(message)
-    console.log(messageHash)
     const signature = await otherWallet.signMessage(ethers.utils.arrayify(messageHash))
 
     const claimPrice = await syntheticLootCharacter.claimPrice()
@@ -102,7 +133,7 @@ describe("SyntheticLootCharacter", function () {
     expect(metadata.name).to.contain(userAddress)
 
     const svg = atob(metadata.image.split(",")[1])
-    console.log(metadata.image)
+    // console.log(metadata.image)
     expect(isSVG(svg)).to.be.true
   })
 })

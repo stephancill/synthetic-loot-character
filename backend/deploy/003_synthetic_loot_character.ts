@@ -35,6 +35,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       Confirm name: ${name}\n
       Confirm symbol: ${symbol}\n
       Confirm deployer address: ${deployer}\n
+      Confirm withdrawal address: ${deployer}\n
       Confirm assets address: ${SyntheticLootCharacterAssets.address}\n
       \n'y' to continue, ENTER to cancel\n`
     )
@@ -46,7 +47,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   await deploy("SyntheticLootCharacter", {
     from: deployer,
     log: true,
-    args: [name, symbol, SyntheticLoot.address, SyntheticLootCharacterAssets.address],
+    args: [name, symbol, deployer, SyntheticLoot.address, SyntheticLootCharacterAssets.address],
     autoMine: true, // speed up deployment on local network (ganache, hardhat), no effect on live networks
   })
 }

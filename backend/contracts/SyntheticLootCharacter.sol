@@ -27,9 +27,11 @@ contract SyntheticLootCharacter is ClaimableSynthetic {
     ISyntheticLootCharacterAssets assets;
     string[] gateways;
 
-    constructor (string memory _name, string memory _symbol, address _syntheticLootAddress, address _syntheticLootCharacterAssetsAddress) ERC721(_name, _symbol) {
+    constructor (string memory _name, string memory _symbol, address _withdrawAddress, address _syntheticLootAddress, address _syntheticLootCharacterAssetsAddress) 
+    ERC721(_name, _symbol) {
         syntheticLoot = SyntheticLoot(_syntheticLootAddress);
         assets = ISyntheticLootCharacterAssets(_syntheticLootCharacterAssetsAddress);
+        withdrawAddress = _withdrawAddress;
     }
 
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
