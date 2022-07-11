@@ -1,16 +1,13 @@
-import { useAccount, useContractRead, useContractWrite, useProvider, useSigner } from "wagmi"
+import { ethers, Wallet } from "ethers"
 import { useEffect, useState } from "react"
-import { useParams, useNavigate } from "react-router"
-import { TokenDetail } from "../TokenDetail/TokenDetail"
-import { useContractAdapter } from "../../hooks/useContractAdapter"
-import { ClaimButton } from "../ClaimButton/ClaimButton"
-import { BigNumber, ethers, Wallet } from "ethers"
-import { Search } from "../Search/Search"
+import { useNavigate, useParams } from "react-router"
 import { useLocation } from "react-router-dom"
-import { TokenCardHeader } from "../TokenCardHeader/TokenCardHeader"
+import { useAccount, useProvider, useSigner } from "wagmi"
 import dice from "../../img/dice.svg"
+import { Search } from "../Search/Search"
+import { TokenCardHeader } from "../TokenCardHeader/TokenCardHeader"
+import { TokenDetail } from "../TokenDetail/TokenDetail"
 import style from "./TokenCard.module.css"
-import { useSyntheticLootCharacter } from "../../hooks/useSyntheticLootCharacter"
 
 const { isAddress, getAddress } = ethers.utils
 
@@ -38,86 +35,18 @@ export const TokenCard = () => {
       : undefined
     : undefined
 
-  const syntheticLoot = useSyntheticLootCharacter(signer || provider)
-  const syntheticLootConfig = useContractAdapter(syntheticLoot)
-
-  const [currentTx, setCurrentTx] = useState<ethers.providers.TransactionResponse | undefined>()
-
-  const [{ data: tokenClaimed }, readTokenClaimed] = useContractRead(syntheticLootConfig, "claimed", {
-    args: [address],
-  })
-
-  const [{ data: tokenId }, readTokenId] = useContractRead(syntheticLootConfig, "getTokenID", { args: [address] })
-
-  const [{ data: claimPrice }] = useContractRead(syntheticLootConfig, "claimPrice")
-
-  const [{ data: ownerAddress }, readOwnerAddress] = useContractRead(syntheticLootConfig, "ownerOf", {
-    args: [tokenId],
-  })
-
-  const [, claim] = useContractWrite(syntheticLootConfig, "claim", { overrides: { value: claimPrice } })
-
-  const [, claimOther] = useContractWrite(syntheticLootConfig, "claimOther")
-
-  const signerCanClaim = address === account?.address || address === randomWallet?.address
   const addressType =
-    account?.address && account?.address === (ownerAddress as any as string)
-      ? AddressType.Owner
-      : randomWallet?.address === address
+    account?.address && randomWallet?.address === address
       ? AddressType.Random
       : account?.address === address
       ? AddressType.Signer
       : AddressType.Search
 
   useEffect(() => {
-    readTokenId()
-    // eslint-disable-next-line
-  }, [address, currentTx, provider])
-
-  useEffect(() => {
-    readTokenClaimed()
-    readOwnerAddress()
-    // eslint-disable-next-line
-  }, [tokenId])
-
-  useEffect(() => {
     if (!signer) {
       setRandomWallet(undefined)
     }
   }, [signer])
-
-  useEffect(() => {
-    if (currentTx) {
-      console.log("new tx", currentTx.hash)
-      currentTx.wait().then(() => {
-        setCurrentTx(undefined)
-      })
-      console.log("tx done")
-    }
-  }, [currentTx])
-
-  useEffect(() => {
-    console.log(
-      "claimPrice changed",
-      claimPrice ? ethers.utils.formatEther(claimPrice as any as BigNumber) : claimPrice,
-    )
-  }, [claimPrice])
-
-  const onClaim = () => {
-    claim().then(({ data: tx }) => setCurrentTx(tx))
-  }
-
-  const onClaimRandom = () => {
-    if (!randomWallet) {
-      return
-    }
-
-    randomWallet.signMessage(ethers.utils.arrayify(claimMessageHash)).then((signature) => {
-      claimOther({ args: [randomWallet.address, signature], overrides: { value: claimPrice } }).then(({ data: tx }) =>
-        setCurrentTx(tx),
-      )
-    })
-  }
 
   const onGenerateRandom = () => {
     const wallet = ethers.Wallet.createRandom()
@@ -155,30 +84,10 @@ export const TokenCard = () => {
       </div>
       <div className={style.tokenCard}>
         <div className={style.tokenCardContent}>
-          <TokenCardHeader
-            address={address}
-            addressType={addressType}
-            ownerAddress={ownerAddress as any as string}
-            onTwitterShare={onTwitterShare}
-          />
+          <TokenCardHeader address={address} addressType={addressType} onTwitterShare={onTwitterShare} />
           {address && (
             <div>
               <TokenDetail address={address}></TokenDetail>
-              {provider && !(!tokenClaimed && !signerCanClaim) && (
-                <div style={{ paddingBottom: "6px", marginTop: "20px" }}>
-                  <ClaimButton
-                    address={address}
-                    claimPrice={claimPrice ? (claimPrice as any as BigNumber) : undefined}
-                    isRandom={randomWallet !== undefined}
-                    signerCanClaim={signerCanClaim}
-                    claimed={tokenClaimed as any as boolean}
-                    tokenId={tokenId as any as BigNumber}
-                    txHash={currentTx?.hash}
-                    onClaim={onClaim}
-                    onClaimOther={onClaimRandom}
-                  />
-                </div>
-              )}
             </div>
           )}
         </div>
