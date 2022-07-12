@@ -29,8 +29,16 @@ export const Copy = () => {
       heading: "What is a Synthetic Loot Character?",
       body: (
         <p>
-          Synthetic Loot Character is a visual representation of an address' Synthetic Loot. It generates a unique,
-          fully on-chain character for each Ethereum address.
+          Synthetic Loot Character is a visual representation of an address' Synthetic Loot. It generates a unique
+          character for each Ethereum address. The artwork was made by{" "}
+          <a href="https://twitter.com/jordanmessina" target="_blank" rel="noopener noreferrer">
+            jordanmessina
+          </a>{" "}
+          and is available at the{" "}
+          <a href="https://github.com/jordanmessina/loot-layers" target="_blank" rel="noopener noreferrer">
+            Loot Layers
+          </a>{" "}
+          repo on GitHub.
         </p>
       ),
     },
